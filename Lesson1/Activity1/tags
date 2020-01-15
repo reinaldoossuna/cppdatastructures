@@ -1,0 +1,56 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_OUTPUT_MODE	u-ctags	/u-ctags or e-ctags/
+!_TAG_PROGRAM_AUTHOR	Universal Ctags Team	//
+!_TAG_PROGRAM_NAME	Universal Ctags	/Derived from Exuberant Ctags/
+!_TAG_PROGRAM_URL	https://ctags.io/	/official site/
+!_TAG_PROGRAM_VERSION	0.0.0	/3fdf28bc/
+$(APP)	Makefile	/^$(APP): $(OBJS)$/;"	t
+APP	Makefile	/^APP         = playlist$/;"	m
+CC	Makefile	/^CC          = g++$/;"	m
+CFLAGS	Makefile	/^CFLAGS      = -I.$/;"	m
+Circular_list	playlist.h	/^Circular_list(): n_(0)$/;"	f	class:Playlist::Circular_list
+Circular_list	playlist.h	/^class Circular_list$/;"	c	namespace:Playlist
+Circular_list_interator	playlist.h	/^    class Circular_list_interator$/;"	c	class:Playlist::Circular_list
+Circular_list_interator	playlist.h	/^    explicit Circular_list_interator(node_ptr p): ptr(p) {}$/;"	f	class:Playlist::Circular_list::Circular_list_interator
+Circular_list_node	playlist.h	/^    Circular_list_node(): data(NULL), next(NULL), prev(NULL) {}$/;"	f	struct:Playlist::Circular_list_node
+Circular_list_node	playlist.h	/^struct Circular_list_node$/;"	s	namespace:Playlist
+HEADERS	Makefile	/^HEADERS     = $(wildcard *.h)$/;"	m
+LFLAGS	Makefile	/^LFLAGS      = -whitespace\/braces$/;"	m
+LINELENGTH	Makefile	/^LINELENGTH  = 120$/;"	m
+OUT	Makefile	/^OUT         = main.out$/;"	m
+Playlist	playlist.h	/^namespace Playlist {$/;"	n
+Playlist	playlist.h	/^struct Playlist$/;"	s	namespace:Playlist
+all	Makefile	/^all: $(APP) run$/;"	t
+begin	playlist.h	/^    Circular_list_interator begin() const {return Circular_list_interator{head};}$/;"	f	class:Playlist::Circular_list	typeref:typename:Circular_list_interator
+begin	playlist.h	/^    Circular_list_interator begin() {return Circular_list_interator{head};}$/;"	f	class:Playlist::Circular_list	typeref:typename:Circular_list_interator
+clean	Makefile	/^clean:$/;"	t
+data	playlist.h	/^    std::shared_ptr<T> data = std::make_shared<T>();$/;"	m	struct:Playlist::Circular_list_node	typeref:typename:std::shared_ptr<T>
+end	playlist.h	/^    Circular_list_interator end() const {return Circular_list_interator{head->prev};}$/;"	f	class:Playlist::Circular_list	typeref:typename:Circular_list_interator
+end	playlist.h	/^    Circular_list_interator end() {return Circular_list_interator{head->prev};}$/;"	f	class:Playlist::Circular_list	typeref:typename:Circular_list_interator
+erase	playlist.h	/^    void erase(const T& value)$/;"	f	class:Playlist::Circular_list	typeref:typename:void
+erase	playlist.h	/^    void erase(int song)$/;"	f	struct:Playlist::Playlist	typeref:typename:void
+get	playlist.h	/^        node_ptr get() { return ptr; }$/;"	f	class:Playlist::Circular_list::Circular_list_interator	typeref:typename:node_ptr
+head	playlist.h	/^    node_ptr head = std::make_shared<node>();$/;"	m	class:Playlist::Circular_list	typeref:typename:node_ptr
+i	playlist.h	/^        for (const auto &i : il)$/;"	m	class:Playlist::Circular_list	typeref:typename:const auto &
+i	playlist.h	/^        for (const auto &i : other)$/;"	m	class:Playlist::Circular_list	typeref:typename:const auto &
+insert	playlist.h	/^    void insert(const T& value)$/;"	f	class:Playlist::Circular_list	typeref:typename:void
+insert	playlist.h	/^    void insert(int song)$/;"	f	struct:Playlist::Playlist	typeref:typename:void
+lint	Makefile	/^lint:$/;"	t
+list	playlist.h	/^    Circular_list<int> list;$/;"	m	struct:Playlist::Playlist	typeref:typename:Circular_list<int>
+loop_once	playlist.h	/^    void loop_once()$/;"	f	struct:Playlist::Playlist	typeref:typename:void
+main	main.cpp	/^int main() {$/;"	f	typeref:typename:int
+n_	playlist.h	/^    size_t n_;$/;"	m	class:Playlist::Circular_list	typeref:typename:size_t
+next	playlist.h	/^    std::shared_ptr<Circular_list_node<T>> next = std::make_shared<Circular_list_node<T>>();$/;"	m	struct:Playlist::Circular_list_node	typeref:typename:std::shared_ptr<Circular_list_node<T>>
+node	playlist.h	/^    using node = Circular_list_node<T>;$/;"	t	class:Playlist::Circular_list	typeref:typename:Circular_list_node<T>
+node_ptr	playlist.h	/^    using node_ptr = std::shared_ptr<node>;$/;"	t	class:Playlist::Circular_list	typeref:typename:std::shared_ptr<node>
+operator !=	playlist.h	/^        friend bool operator!=(const Circular_list_interator &it1, const Circular_list_interator/;"	f	class:Playlist::Circular_list	typeref:typename:bool
+operator *	playlist.h	/^        T& operator*() { return *(ptr->data);}$/;"	f	class:Playlist::Circular_list::Circular_list_interator	typeref:typename:T &
+operator ++	playlist.h	/^        Circular_list_interator& operator++() { ptr = ptr->next; return *this; }$/;"	f	class:Playlist::Circular_list::Circular_list_interator	typeref:typename:Circular_list_interator &
+operator --	playlist.h	/^        Circular_list_interator& operator--() { ptr = ptr->prev; return *this; }$/;"	f	class:Playlist::Circular_list::Circular_list_interator	typeref:typename:Circular_list_interator &
+operator ==	playlist.h	/^        friend bool operator==(const Circular_list_interator &it1, const Circular_list_interator/;"	f	class:Playlist::Circular_list	typeref:typename:bool
+prev	playlist.h	/^    std::shared_ptr<Circular_list_node<T>> prev = std::make_shared<Circular_list_node<T>>();$/;"	m	struct:Playlist::Circular_list_node	typeref:typename:std::shared_ptr<Circular_list_node<T>>
+ptr	playlist.h	/^        node_ptr ptr;$/;"	m	class:Playlist::Circular_list::Circular_list_interator	typeref:typename:node_ptr
+run	Makefile	/^run:$/;"	t
+size	playlist.h	/^    size_t size() const { return n_; }$/;"	f	class:Playlist::Circular_list	typeref:typename:size_t
+~Circular_list	playlist.h	/^    ~Circular_list<T>()$/;"	f	class:Playlist::Circular_list

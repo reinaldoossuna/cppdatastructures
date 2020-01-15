@@ -1,0 +1,418 @@
+# Created 2020-01-15 Wed 09:23
+#+OPTIONS: ^:nil
+#+TITLE: 
+#+AUTHOR: Reinaldo Ossuna
+* C++ Data Structures and Algorithm Design Principles
+
+Most of this notes are from the book:
+
+C++ Data structures and algorithm design Principles.
+Author: John Carey, Shreyans Doshi and Payas Rajan
+
+The code here is very similar with the solutions proposed from the book.[[https://github.com/TrainingByPackt/CPP-Data-Structures-and-Algorithm-Design-Principles][GitHub]]
+
+The main differeces:
+- Use of smart pointer
+- Google Style
+- Use of headers files
+
+** is it my solutions better?
+NO.
+
+* TODO Time complexity
+* List, Stacks, and Queues
+
+** Introduction
+The choice of the right structure for holding data, also known as a data structure, is crucial for ensuring reliability, performance, and enabling the required functionalities in the application.
+
+** Contiguous Versus Linked Data Structures
+
+Time complexity indicates the relative amount of time required, in proportion to the size of the data, to perform a certain operation.
+
+*** Contiguous Data Structures
+Store all the elements in a single chunk of memory.
+
+[[file:./Images/1575988043.png]]
+
+To access any element at index *i*, we can get it with the generic formula: *BA + i * (sizeof(type))*.
+In this case, the access time is always constant. /O(1)/.
+
+The two main typoes of arrays are:
+- Static:
+  has a lifetime only inside its declaration block.
+- Dynamic:
+  provides better flexibility since the programmer can determine when it should be allocated and whe it should be deallocated.
+
+
+#+begin_src C++
+
+// Static array 
+int arr[size];
+
+// Dynamic array
+int* arr = new int[size];
+//or
+std::unique_ptr<int> arr = std::make_unique<int>();
+std::shared_ptr<int> arr = std::make_shared<int>();
+#+end_src
+
+  A static array is aggregated, which means that it is allocated on the stack, and hence gets deallocated when the flow goes out of the function. On the other hand, a dynamic array is allocated on a heap and stays there until the memory is freed manually. (not true for smart pointers)
+Since all the elements are present next to each other, when one of the elements is acessed, a few elements next to it are also brought into the cache. Hence, if you want to access those elements, it is a very fast operation as the data is already present in the cache. This property is alo known as *cache locality*.
+
+*** Linked Data Structures
+
+hold the data in multiple chunks of memory, also known as nodes, which may be placed at different places in the memory.
+
+[[file:./Images/1575991657.png]]
+
+Each node contains the data to be stored in that node and a ponter to the next node. The last node contains a NULL pointer to indicate the end of the list.
+To reach any element, we must start from the beginning of the linked list, that is, the head, and follow the next pointer until we reach the intended element.
+To access the element present at index i, we need to traverse through the linked list and iterate i times.
+/O(n)/.
+
+To insert or delete any element the operation is really small and quite fast for a linked list compared to arrays.
+
+[[file:./Images/1575992104.png]]
+
+A linked list can't provide cache locality at all since the elements are not stored contiguously in memory.
+
+*** Comparison
+
+| Contiguous Data Structures                                                           | Linked Data Structures                                            |
+|--------------------------------------------------------------------------------------+-------------------------------------------------------------------|
+| All the data is stored nex to one another in memory                                  | Data is stored in nodes, which may be scattered across the memory |
+| Accessing random element is immediate due to contiguous data                         | Accessing random elements is linear and slower                    |
+| Since data is stored contiguous, traversal is faster due to cache locality           | traversal is a bit slower as there is no cache locality           |
+| No memory overhead on top of the memory required for storing the elements themselves | Extra memory is required to sotre pointers in each node           |
+
+| Parameter               | Array | Linked List |
+|-------------------------+-------+-------------|
+| Random access           | O(1)  | O(n)        |
+| Insertion at end        | O(1)  | O(1)        |
+| Insertion in the middle | O(n)  | O(1)        |
+| Cache locality          | Yes   | No          |
+
+
+** std::vector
+Drawbacks of std::array:
+- The size of std::array must be constant and provided at compile time, and fixed. So, we can't change it at runtime.
+- Due to size limitation, we can't insert or remove elements from the array.
+- No custom allocation is possible for std::array. It always uses stack memory
+
+*std::vector* does not require us to provide its length during initialization.
+
+We can insert elements using:
+- *push_back*
+  it'll insert elements at the end.
+  If there's enough space, *push_back* only takes /O(1)/ time to insert something at the back.
+  If there's not enough space, it will have to copy/move all the elements, which will take /O(n)/ time.
+- *insert*
+  it takes the iterator as the first parameter for the position, and it can be used to insert the element in any location.
+  *insert* need to shift the elements that come after the given iterator, So it takes /O(n)/ time.
+
+*push_back* and *insert*, they first construct the element, and then either copy or move the element to its new location inside the vector's buffer.
+*emplace_back* and *emplace*, they /forward/ the arguments to the constructor at the appropriate location.
+
+We can remove elements using:
+- *pop_back*
+  it removes the last element from the vector, effectively reducing the size by one.
+  /O(1)/
+- *erase*
+  it can remove a single element provided by the iterator pointing to it, and to remove a range of elements provided by the iterator, where the range is defined by the element to be removed (inclusive) and the last element to be removed (exclusive).
+  /O(n)/
+
+** std::forward_list
+
+Insertion and deletion in the middle of the data strucures are very inefficient operation for contiguous data structures.
+The purpose of *std::forward_list* is to provide some additional functionality without compromising performance compared to a basic linked list.
+
+We can insert elements using:
+
+- *push_fron*
+  it'll insert a element at the front. Since *forward_list* doesn't have direct acess to the last element. /O(1)/
+
+- *insert_after*
+  Insert an new elemeent in a linked list requires updating the next pointer of the element, since traversing backward is not allowed in forward_list. /O(1)/
+
+*forward_list* also provides *emplace_front* and *emplace_after*, which is similar to emplace to a vector.
+
+We can remove elements using:
+
+- *pop_front*
+  it rmeoves the first element. /O(1)/
+- *erase_after*
+  it can remove a single element, taking an iterator to its previos element.
+  it can remove multiple elements in a range, taking an iterator to the element before the first eleemnt of the range and another iterator to the las element.
+  The time complexity is linear to the number of elements that are erased because the deletion of elements can't be done via deallocating just a single chunk of memory. the function needs to deallocate each of them separately.
+
+
+functions to remove elements based on their values.
+- *remove*
+  It removes all the elements that match the given element based on the equality operator defined for the type of the value. /O(n * logn)/
+- *remove_if*
+  it takes a predicate as a parameter, which is a function taking an element of the value type as a parameter, and a Boolean as the return value. /O(n)/
+
+
+There is no operator[] int the *forward_list. There are other utility functions that we can use, such:
+
+- *advance*
+- *next*
+- *prev*
+
+** std::list
+it's a bidirectional linked list, also known as a doubly-linked list.
+it's one extra pointer to point to the previous element. Thus, it provides us with a way in which to traverse backward.
+We can also store the size and the last element to support fast push_back and size operation.
+
+although *push_front*, *insert*, *pop_front* and *erase* have the same time complexity as equivalent function for *std::forward_list*, these are slightly more expensive for *std::list*.
+
+[[file:./Images/1576856471.png]]
+
+As we can see, the number of operation is constant even in the case of std::list; however, compared to *forward_list*, we have to fix both the Prev and next pointers
+
+Unlike vector, linked list-based iterators ares safer for insertion and deletion operation because the element will not be shifted or moved.
+
+#+begin_src C++
+  
+  std::vector<int> vec = {1,2,3,4,5};
+  auto it4 = vec.begin() + 4;
+  // it4 now points to vec[4]
+  vec.insert(vec.begin() + 2,0);
+  // vec becomes {1,2,0,3,4,5}
+#+end_src
+
+*it4* is invalid now, since it comes after the insertion position. Acessing it will lead to undefined behavior.
+
+#+begin_src C++
+  
+  std::list<int> lst = {1,2,3,4,5};
+  auto l_it4 = next(lst.begin(), 4);
+  lst.insert(next(vec.begin(), 2),0);
+  // l_it4 remains valid 
+#+end_src
+
+A lot of operation, such as *size*, *push_back*, and *pop_back*, are provided, which operate with a time complexity of /O(1)/.
+
+** std::deque
+it's short for double ended queue. try to overcome the costly *push_front* and *pop_front*
+
+The STL guarantees the following time complexities for different
+operation of deque:
+
+- /O(1)/ *push_front* *pop_front* *push_back* *pop_back*
+- /O(1)/ random access to all the elements
+- Maximum of N/2 steps in the case of insertion or deletion in the middle
+
+** std::stack
+
+Follow *LIFO* *Last In First Out*.
+
+Provides:
+- empty
+- size
+- top
+  call *back*
+- push
+  call *push*_back
+- pop
+  call *pop_*back
+- emplace
+
+** std::queue
+Follow *FIFO* *First In First Out*.
+
+- *push* means *push_back*
+- *pop* means *pop_front*
+** std::priority_queue
+Provides a *heap*, fast access to the minimum or maximum element from the
+container with /O(1)/.
+
+Insert has /O(log n)/, while delection can only be performd for the min/max
+element, which always stays on the top.
+* Trees, Heaps, and Graphs
+- Problems solved with trees and graphs
+  - B-trees
+  - Huffman Tree
+  - graph coloring
+  - assignemnet problems
+  - minimum distance
+
+** Hierarchical Problems
+
+[[file:./Images/1578406604.png]]
+
+This data is inherently hierarchical in nature. This type of data is difficult
+to manage using simple arrays, vectors or linked lists.
+
+This problem can solved using a data structure called a *tree*. All of the
+objects are known as the /nodes/ of a tree, while the paths leading from one
+node to another are known as /edges/.
+
+** Cyclic Dependencies
+[[file:./Images/1578759166.png]]
+
+This structure is called a graph. Such structures commonly used by varioys
+social networks to represents theris users and the connections between them.
+** Tree
+The main node, which is not dependent on any other node, is also known as root
+node and is usually representeded at the top.
+
+** Creating an Organizational Structure
+
+we'll assume that any person can have, at most, two subordinates.
+
+#+begin_src cpp
+struct Node {
+  std::string position;
+  std::shared_ptr<Node> left;
+  std::shared_ptr<Node> right;
+
+  explicit Node(const std::string& pos):position(pos), left(nullptr), right(nullptr) {}
+};
+#+end_src
+
+The Tree need to have a root and to make easier to create a tree we add a static
+fuction to create on
+
+#+begin_src cpp
+class Tree {
+ private:
+  using node_ptr = std::shared_ptr<Node>;
+  node_ptr root;
+#+end_src
+
+#+begin_src cpp
+  static Tree create_tree(std::string pos) {
+    Tree tree;
+    tree.insert("", pos);
+    return tree;
+  }
+#+end_src
+
+To add a subordinate of an employeem, you need a function that will us find this
+particular node based on a value.
+
+Two functions was declared, the first one start looking in the root node. The
+second one look recursively until find a nullptr or the desirable value.
+#+begin_src cpp
+  node_ptr find_helper(node_ptr node, std::string pos) {
+    if (node == nullptr)
+      return nullptr;
+
+    if (node->position == pos)
+      return node;
+
+    auto left_found = this->find_helper(node->left, pos);
+    if (left_found)
+      return left_found;
+
+    return this->find_helper(node->right, pos);
+  }
+#+end_src
+#+begin_src cpp
+  node_ptr find(const std::string& pos) {
+    return find_helper(this->root, pos);
+  }
+#+end_src
+
+To add a new function. First we make sure that the root has a value
+This part of the code is used in the Tree::create_tree
+
+#+begin_src cpp
+  bool insert(const std::string& parent_pos, const std::string& pos) {
+    if (root == nullptr) {
+      root = node_ptr(new Node(pos));
+      return true;
+#+end_src
+
+After that we find the parent_node and look in the two branches
+
+#+begin_src cpp
+    } else {
+      auto parent_node = this->find(parent_pos);
+
+      if (!parent_node) {
+        std::cout << parent_pos << " not in the tree" << std::endl;
+        return false;
+      }
+
+      if (parent_node->left && parent_node->right) {
+        std::cout << parent_pos << "already has 2 subordinates" << std::endl;
+        return false;
+      } else {
+        if (!parent_node->left)
+          parent_node->left  = node_ptr(new Node(pos));
+        else
+          parent_node->right = node_ptr(new Node(pos));
+      }
+    }
+    return true;
+  }
+};
+#+end_src
+
+in the main function we created a function to make the insert easier
+
+#+begin_src cpp
+void try_to_add(Tree t, const std::string& f, const std::string& s) {
+  if (t.insert(f, s))
+    std::cout << "Added " << s << " in the tree" << std::endl;
+  else
+    std::cout << "Couldn't add " << s << " in the tree" << std::endl;
+}
+
+int main() {
+  Tree tree = Tree::create_tree("CEO");
+  tree.insert("CEO", "Deputy Director");
+  try_to_add(tree, "Deputy Director", "IT Head");
+  try_to_add(tree, "Deputy Director", "Marketing Head");
+  try_to_add(tree, "IT Head", "Security Head");
+#+end_src
+** Traversing Trees
+[[file:./Images/1578859409.png]]
+- Preorder Traversal
+  The prefix *Pre* indicates that the parent node is visited before its children.
+  Traversing the tree above in this method goes like this:
+
+  CEO, Deputy Director, IT Division, Marketing Head, Security Head, App
+  Development, Logistics Head, Public Relations Head.
+- In-order traversal
+  we visit the more left and below node, the the parent node, and finally the
+  right node.
+
+  Security Head, IT Division, App Development, Deputy Director, Logistics Head,
+  Marketing Head, Public Relations Head, CEO.
+- Post-order traversal
+  We visit both the children followed by the parent node.
+
+  Security Head, App Development, IT Division, Logistics Head,
+  Public Relations Head, Marketing Head, Deputy Director, CEO.
+- Level order traversal
+  we visit each level of the tree, from top to bottom, and from left to right.
+
+  CEO,
+  Deputy Director,
+  IT Division, Marketing Head,
+  Security Head, App Development, Logistics Head, Public Relations Head.
+*** Demostrating Level Order Traversal
+
+#+begin_src cpp
+      auto parent_node = this->find(parent_pos);
+
+      if (!parent_node) {
+        std::cout << parent_pos << " not in the tree" << std::endl;
+        return false;
+      }
+
+      if (parent_node->left && parent_node->right) {
+        std::cout << parent_pos << "already has 2 subordinates" << std::endl;
+        return false;
+      } else {
+        if (!parent_node->left)
+          parent_node->left  = node_ptr(new Node(pos));
+        else
+          parent_node->right = node_ptr(new Node(pos));
+      }
+    }
+    return true;
+#+end_src
