@@ -1,8 +1,11 @@
-# Created 2020-01-15 Wed 09:23
+# Created 2020-01-15 Wed 09:39
+#+OPTIONS: TOC:2
 #+OPTIONS: ^:nil
 #+TITLE: 
 #+AUTHOR: Reinaldo Ossuna
 * C++ Data Structures and Algorithm Design Principles
+
+#+TOC: headlines 2
 
 Most of this notes are from the book:
 
@@ -18,6 +21,7 @@ The main differeces:
 
 ** is it my solutions better?
 NO.
+
 
 * TODO Time complexity
 * List, Stacks, and Queues
