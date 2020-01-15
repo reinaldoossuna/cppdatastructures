@@ -1,7 +1,7 @@
-APP         = filesystem
+APP         = graph2
 
 CC          = g++
-SRCS        = main.cpp
+SRC         = main.cpp
 OUT         = main.out
 
 CFLAGS      = -I.

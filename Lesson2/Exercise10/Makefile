@@ -1,4 +1,4 @@
-APP         = filesystem
+APP         = stream
 
 CC          = g++
 SRCS        = main.cpp

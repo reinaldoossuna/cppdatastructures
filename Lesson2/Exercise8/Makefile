@@ -11,7 +11,7 @@ LFLAGS      = -whitespace/braces,-legal/copyright
 LINELENGTH  = 120
 
 .PHONY: all run clean lint debug
-all: $(APP) run
+all: lint $(APP) run
 
 debug:
 	$(CC) -o debug_$(OUT) -g main.cpp $(CFLAGS)

@@ -1,4 +1,4 @@
-APP         = filesystem
+APP         = graph1
 
 CC          = g++
 SRCS        = main.cpp
