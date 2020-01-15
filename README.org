@@ -1,11 +1,11 @@
-# Created 2020-01-15 Wed 09:39
-#+OPTIONS: TOC:2
+# Created 2020-01-15 Wed 20:12
+#+OPTIONS: toc:2
 #+OPTIONS: ^:nil
 #+TITLE: 
 #+AUTHOR: Reinaldo Ossuna
 * C++ Data Structures and Algorithm Design Principles
 
-#+TOC: headlines 2
+#+toc: headlines 2
 
 Most of this notes are from the book:
 
@@ -19,11 +19,52 @@ The main differeces:
 - Google Style
 - Use of headers files
 
+  #+begin_quote
+  Perhaps the mos important principle for the good algorithm designer is to
+  refuse to be content.
+  --- Aho, Hopcroft, and Ullman
+  #+end_quote
+
 ** is it my solutions better?
 NO.
 
+* Time complexity
 
-* TODO Time complexity
+[[file:./Images/Comparison_computational_complexity.svg.png]]
+
+Time complexity is commonly estimated by counting the number of elementray
+operations performed by the algorithm, supposing that each elementary operation
+takes a fixed amount of time to perform.
+
+Since an algorithm's time may vary amont different inputs of the same size, one
+commonly considers the worst-case time complexity.
+Therefore, the time complexity is commonlu expressed unsing *big O* notation
+/O(n)/, where /n/ is the input size.
+
+| Time Name            | Complexity Class | Running Time    | Examples algorithms                                                    |
+|----------------------+------------------+-----------------+------------------------------------------------------------------------|
+| constant             |                  | O(1)            | find median value in a sorted array                                    |
+| inverse Ackermann    |                  | O(a(n))         | Amortized time per operation using disjoint set                        |
+| Iterated logarithmic |                  | O(log* n)       | Distributed coloring of cycles                                         |
+| Log logarithmic      |                  | O(log log n)    | Amortized tiem per opration using a bounded priority queue             |
+| logarithmic          | DLOGTIME         | O(log n)        | Binary search                                                          |
+| Polylogarithmic      |                  | poly(log n)     |                                                                        |
+| Fractional power     |                  | O(n^c)          | seaching in a Kd-tree                                                  |
+| Linear               |                  | O(n)            | Finding the smallest or larges item in a unsorted array                |
+| n log-start n        |                  | O(n log* n)     | Seidel polygon triangulation algorithm                                 |
+| linearithmic         |                  | O(n log n)      | Fastes possible comparison sort; FFT                                   |
+| quasilinear          |                  | n poly(log n)   |                                                                        |
+| Quadratic            |                  | O(n^2)          | Bubble sort; Insertion sort; Direct Convolution                        |
+| Cubic                |                  | O(n^3)          | Naive mulplcation of two nxn matrices' calculation partial correlation |
+| Polynomial           | P                | 2^(O(log n))    | karmarkar's algorithm for linear programming`                          |
+| Quasipolynomial      | QP               | 2^(poly(log n)) | Bestknown approximantion algorithm for the steiner tree problem        |
+| sub exponetial       | SUBEXP           | O(2^n^E)        | Constais BPP                                                           |
+| sub exponetial 2Def. |                  | 2^O(n)          | Best-known algorithm for integer factorization                         |
+| Exponetial           | E                | 2^o(n)          | Solving traveling salesman problem using Dynamic programming           |
+| Exponetial           | EXPTIME          | 2^poly(n)       | Solving matrix chain multiplication via bruteforce search              |
+| Factorial            |                  | O(n!)           | Solving traveling salesman problem via brute force                     |
+| Double exponetial    | 2-EXPTIME        | 2^2^(poly(N))   | Deciding the truth of given statement in presburger arithmetic         |
+
 * List, Stacks, and Queues
 
 ** Introduction
@@ -420,3 +461,110 @@ int main() {
     }
     return true;
 #+end_src
+*
+* Hash Tables and Bloom Filters
+For most of scenarios, just going through all the elemenst linearly and matching
+the values would be extremely time-cosuming, especially considering the vast
+amount of records that are stored. it will have a time complexity of /O(n)/.
+** Hash Tables
+The idea is to represent each value with a possibly unique key and, later on,
+use the same key to check for the presence of the key or to retrive a
+corresponding value.
+
+we use a hash function to transoform any value of any data type to an integer in
+the desired range. This fuction can be simple a modulo function, as we'll
+demonstrate now.
+
+#+begin_src cpp
+#include <vector>
+
+using uint = unsigned int;
+
+class hash_map {
+ public:
+  explicit hash_map(size_t n) {
+    data = std::vector<int>(n, -1);
+  }
+#+end_src
+
+As show here, we're using -1 to indicate the absence of an element.
+N is the size o the table and it'll be used in the module function.
+
+#+begin_src cpp
+  void insert(uint value) {
+    int n = data.size();
+    data[value % n] = value;
+    std::cout << "Inserted" << value << std::endl;
+  }
+#+end_src
+
+[[file:./Images/1579100471.png]]
+
+[[file:./Images/1579100478.png]]
+
+We can't insert two elements with the same hash value, we must to drop one of them.
+This is called a collision.
+
+** Collisions in Hash Tables
+We a collision when multiple keys had the same hash value.
+
+*** Close Addressing - Chaining
+In this method instead of storing a single key in the hash table, we'll store a
+linked list for each index.
+
+#+begin_src cpp
+ private:
+  std::vector<std::list<int>> data;
+};
+#+end_src
+
+#+begin_src cpp
+  void insert(uint value) {
+    int n = data.size();
+    data[value % n].push_back(value);
+    std::cout << "Inserted" << value << std::endl;
+  }
+  bool find(uint value) {
+    int n = data.size();
+    auto& entries = data[value % n];
+    return std::find(entries.begin(), entries.end(), value) != entries.end();
+  }
+  void erase(uint value) {
+    int n = data.size();
+    auto& entries = data[value % n];
+    auto iter =  std::find(entries.begin(), entries.end(), value);
+    if (iter != entries.end()) {
+      entries.erase(iter);
+      std::cout << "Removed" << value << std::endl;
+    }
+#+end_src
+
+If the has table is very small compared to the number of keys to be stored,
+there will be a lot of collision, and the list will belonger on average. On the
+oher hand, if we keep a very big hash table, we may end up having very sparse
+data and end up wasting memory.
+
+The *load factor* indicates the average number of keys present per list in our
+hash table. It can be computed using the following formula:
+
+\begin{equation}
+load\ factor = \frac{number\ of\ keys}{size\ of\ hash\ table}
+\end{equation}
+
+- if load factor == 1
+  This is an ideal scenario, this has /O(1)/ for all the operations and the space
+  will be utilized properly.
+- if load factor < 1
+  We are not storing one key per list and wasting some space.
+- if load factor > 1
+    We are storing more than one key per hash. and out find and removal function
+  will be a bit slower on average.
+
+
+*** Open Addressing
+We store all elements inside the hash table instead of chaining the elements.
+To accommodate all the elements, the size of the has table must be greater that
+the number of elements.
+The idea is probe if a cell correspoing to aparticilar hash value is already occupied.
+
+**** Linear probing
