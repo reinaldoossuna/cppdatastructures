@@ -8,7 +8,7 @@ struct student {
 };
 
 std::ostream& operator<<(std::ostream& os, const student& s) {
-  return (os<<"Name: " << s.name << ", Standard: " << s.standard);
+  return (os << "Name: " << s.name << ", Standard: " << s.standard);
 }
 
 int main() {

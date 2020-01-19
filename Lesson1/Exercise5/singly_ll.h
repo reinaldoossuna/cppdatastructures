@@ -1,3 +1,5 @@
+#pragma once
+
 #include <iostream>
 #include <algorithm>
 
@@ -18,14 +20,15 @@ struct singly_ll_iterator {
   node_ptr get() {return ptr;}
   singly_ll_iterator& operator++();
   singly_ll_iterator operator++(int);
-    friend bool operator==(const singly_ll_iterator& left,          \
-                           const singly_ll_iterator& right) {
-      return left.ptr == right.ptr;
-    }
-    friend bool operator!=(const singly_ll_iterator& left,          \
-                           const singly_ll_iterator& right) {
-      return left.ptr != right.ptr;
-    }
+
+  friend bool operator==(const singly_ll_iterator& left,          \
+                          const singly_ll_iterator& right) {
+    return left.ptr == right.ptr;
+  }
+  friend bool operator!=(const singly_ll_iterator& left,          \
+                          const singly_ll_iterator& right) {
+    return left.ptr != right.ptr;
+  }
 };
 
 class singly_ll {

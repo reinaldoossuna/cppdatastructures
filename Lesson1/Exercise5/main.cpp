@@ -1,7 +1,7 @@
 #include "./singly_ll.h"
 
 int main() {
-  singly_ll sll = {1, 2, 3};
+  singly_ll sll{1, 2, 3};
   sll.push_front(0);
 
   std::cout << "First list: ";

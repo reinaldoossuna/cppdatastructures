@@ -6,16 +6,16 @@
 
 template<class T>
 class Dynamic_array {
- private:
-  T *data;
-  size_t n;
-
  public:
-  explicit Dynamic_array(int n): n(n) { data = new T[n]; }
-
-  Dynamic_array(const Dynamic_array<T> &other): n(other.n) {
+  explicit Dynamic_array(int n)
+      : n(n) {
     data = new T[n];
-    for (int i = 0; i < n; i++)
+  }
+  Dynamic_array(const Dynamic_array<T>& other)
+      : n(other.n) {
+    data = new T[n];
+    for (unsigned int i = 0; i < n; i++)
+
       this->data[i] = other[i];
   }
 
@@ -26,7 +26,6 @@ class Dynamic_array {
       return data[index];
     throw "Index out of range";
   }
-
   size_t size() const { return n; }
   T *begin() const { return data; }
   T *end() const { return data + n; }
@@ -39,4 +38,8 @@ class Dynamic_array {
     std::copy(arr2.begin(), arr2.end(), result.begin() + arr1.size());
     return result;
   }
+
+ private:
+  T *data;
+  size_t n;
 };
