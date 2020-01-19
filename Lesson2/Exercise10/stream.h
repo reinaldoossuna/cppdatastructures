@@ -3,6 +3,7 @@
 #include <iostream>
 #include <queue>
 #include <vector>
+#include <functional>
 
 struct Median {
     std::priority_queue<int> max_heap;

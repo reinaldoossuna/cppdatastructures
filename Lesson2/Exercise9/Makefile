@@ -1,30 +1,33 @@
-APP         = binary_tree
+APP         = orgtree.out
 
 CC          = g++
-SRCS        = main.cpp
-OUT         = main.out
-
-CFLAGS      = -I.
-
+SRCS        = $(wildcard *.cpp)
 HEADERS     = $(wildcard *.h)
-LFLAGS      = -whitespace/braces,-legal/copyright
+OBJS        = $(patsubst %.cpp, %.o, $(SRCS))
+
+CFLAGS      = -Wall -Wextra -Werror -I.
+LFLAGS      = -legal/copyright,-build/include
 LINELENGTH  = 120
 
-.PHONY: all run clean lint debug
-all: lint $(APP) run
+.PHONY: all clean lint
+all: lint run clean
 
-debug:
-	$(CC) -o debug_$(OUT) -g main.cpp $(CFLAGS)
+debug: CFLAGS += -g
+debug: $(APP)
+
+%.o: %.cpp $(HEADERS)
+	$(CC) -c -o $@ $< $(CFLAGS)
 
 $(APP): $(OBJS)
-	$(CC) -o $(OUT) main.cpp $(CFLAGS)
+	$(CC) -o $@ $^ $(CFLAGS)
 
-run:
-	./$(OUT)
+run: $(APP)
+	./$(APP)
 
 lint:
-	cpplint --linelength=$(LINELENGTH) --filter=$(LFLAGS) $(SRC) $(HEADERS)
-	cppcheck --language=c++ $(SRC) $(HEADERS)
+	cpplint --linelength=$(LINELENGTH) --filter=$(LFLAGS) $(SRCS) $(HEADERS)
+	cppcheck --language=c++ $(SRCS) $(HEADERS)
 
 clean:
-	rm $(OUT)
+	rm $(OBJS)
+	rm $(APP)
