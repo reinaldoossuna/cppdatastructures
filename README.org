@@ -1,4 +1,4 @@
-# Created 2020-01-15 Wed 20:12
+# Created 2020-01-19 Sun 20:00
 #+OPTIONS: toc:2
 #+OPTIONS: ^:nil
 #+TITLE: 
@@ -442,26 +442,41 @@ int main() {
 *** Demostrating Level Order Traversal
 
 #+begin_src cpp
-      auto parent_node = this->find(parent_pos);
 
-      if (!parent_node) {
-        std::cout << parent_pos << " not in the tree" << std::endl;
-        return false;
-      }
-
-      if (parent_node->left && parent_node->right) {
-        std::cout << parent_pos << "already has 2 subordinates" << std::endl;
-        return false;
-      } else {
-        if (!parent_node->left)
-          parent_node->left  = node_ptr(new Node(pos));
-        else
-          parent_node->right = node_ptr(new Node(pos));
-      }
-    }
-    return true;
 #+end_src
 *
+** Balanced Search Trees
+
+[[https://algs4.cs.princeton.edu/33balanced/][Balanced Search Trees]]
+
+In order to optimize the time complextity, we need to optimize the height of the
+tree. With a Balanced Search Tree the height is guaranteed to be no larger than
+/O(2lg N)/.
+
+
+*** 2-3 search tree
+
+A 2-3 search treee is a tree that either a node is empty or:
+- A 2-node, with one key and two links, a left link with smaller keys, and a
+  right link with larger keys (common node)
+- A 3-node, with *two* keys and three links a left link with smaller keys, a
+  middle link with keys between the node's and righ link with larger keys.
+
+  [[file:./Images/1579367145.png]]
+
+  Search and insert operation in a 203 tre with N keys are guaranteed to bisit
+  at most lg N nodes. However, most of the implementetation is inconvenient.
+
+*** TODO Red-black BSTs
+The idea behind red-black BST's is to encode 2-3 trees bt starting with standard
+BST and adding extra informatio to encode 3-nodes. We think of the links as
+being of two different types: red links, which bind together two 2nodes to
+represent 3-nodes, and black  links, which bind together 2-3 trees.
+
+[[file:./Images/1579367623.png]]
+
+[[file:./Images/1579367798.png]]
+
 * Hash Tables and Bloom Filters
 For most of scenarios, just going through all the elemenst linearly and matching
 the values would be extremely time-cosuming, especially considering the vast
@@ -505,10 +520,10 @@ N is the size o the table and it'll be used in the module function.
 We can't insert two elements with the same hash value, we must to drop one of them.
 This is called a collision.
 
-** Collisions in Hash Tables
+*** Collisions in Hash Tables
 We a collision when multiple keys had the same hash value.
 
-*** Close Addressing - Chaining
+**** Close Addressing - Chaining
 In this method instead of storing a single key in the hash table, we'll store a
 linked list for each index.
 
@@ -561,10 +576,53 @@ load\ factor = \frac{number\ of\ keys}{size\ of\ hash\ table}
   will be a bit slower on average.
 
 
-*** Open Addressing
+**** Open Addressing
 We store all elements inside the hash table instead of chaining the elements.
 To accommodate all the elements, the size of the has table must be greater that
 the number of elements.
 The idea is probe if a cell correspoing to aparticilar hash value is already occupied.
 
-**** Linear probing
+***** Linear probing
+If there is a collision at a particular has value, we simply look at the
+subsequent has value for an empty cell and insert our element once we find room
+for it.
+
+if the data is clustered, there is, the data is distributed in such a way that
+there are some groups around which the frequency of value is very high. Most of
+the keys will be probed to some consecutively after that, and it will slow down
+our searching.
+***** Quadratic probing
+if there is a collision at a particula hash value, we go to the position
+hash(x + 12), and then hash(x + 22), and so on.
+**** Perfect Hashing - Cuckoo Hashing
+We keep two (it's can have more than two) hash tables of the same size, each with their own unique hash
+fuction. Any element can be present in either of the hash tables, and its
+position is based on the correspoing hash function.
+
+- Any element can be present in any of the two hash tables.
+- Any element can be moved to another location in the future, even after insertion.
+
+  For lookup, /O(1)/.
+
+  However, An insertin function, first checks whether it is possible to insert
+  the new element in the first hash table. If so, inserts the elements there.
+  but if that position is occupied by a preexisting element, we move this to the
+  next table. And so on, until we are able to find empty slots for all elements
+
+[[file:./Images/1579199108.png]]
+
+This could end up in a cycle and the recusion may lead to an infinite loop. To
+address this, once we've identified the cycle, we need to rehash everthing with
+new hash functions.
+** Bloom Filters
+They are extremely space-efficient compared to hash tables, but at the cost of
+deterministic answers.
+
+We will use multple hash functions. The fundamental idea is that instead of
+storing the avtual values, we store an array of Booleans indicating whether or
+not a value is present.
+
+[[file:./Images/1579373185.png]]
+[[file:./Images/1579373192.png]]
+[[file:./Images/1579373198.png]]
+* Divide and Conquer
