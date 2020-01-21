@@ -1,8 +1,10 @@
-# Created 2020-01-19 Sun 20:00
+# Created 2020-01-21 Tue 20:15
 #+OPTIONS: toc:2
 #+OPTIONS: ^:nil
+#+OPTIONS: todo:nil
 #+TITLE: 
 #+AUTHOR: Reinaldo Ossuna
+
 * C++ Data Structures and Algorithm Design Principles
 
 #+toc: headlines 2
@@ -453,7 +455,6 @@ In order to optimize the time complextity, we need to optimize the height of the
 tree. With a Balanced Search Tree the height is guaranteed to be no larger than
 /O(2lg N)/.
 
-
 *** 2-3 search tree
 
 A 2-3 search treee is a tree that either a node is empty or:
@@ -467,7 +468,7 @@ A 2-3 search treee is a tree that either a node is empty or:
   Search and insert operation in a 203 tre with N keys are guaranteed to bisit
   at most lg N nodes. However, most of the implementetation is inconvenient.
 
-*** TODO Red-black BSTs
+*** Red-black BSTs
 The idea behind red-black BST's is to encode 2-3 trees bt starting with standard
 BST and adding extra informatio to encode 3-nodes. We think of the links as
 being of two different types: red links, which bind together two 2nodes to
@@ -626,3 +627,132 @@ not a value is present.
 [[file:./Images/1579373192.png]]
 [[file:./Images/1579373198.png]]
 * Divide and Conquer
+A divide-and-conquer type algorithm breaks the given problem into smaller parts,
+tries to solve the problem for each part, and, finally combines the solution for
+each part into the solution for the whole problem.
+
+** Binary Search
+
+We are given a *sorted* sequence of positive integers and required to find out if
+a number, N, exists in the sequence.
+
+We could iterate over the entire sequence, checking whether each element is
+equal to N. this is called a linear search. However, it is inefficient and does
+not take into account that the given array is sorted. /O(n)/ algorithm.
+
+An alternative solution that explits the fact that the sequence is sorted is as follow.
+
+1. Start with the whole sequence in range
+2. Compare the middle eleemnt of the current range with N, Let this middle
+   element be M.
+   1. If M == N, we found N in the sequence and, therefore, the search stops.
+   2. Otherwise, we modify the range:
+      - If N < M, it means that if N were to be present in the range, it would
+        be to the left of M and, therefore, we can safely remove all the elemts
+        to the right of M from the range.
+      - If N > M, the algorithm removes all the elements to the left of M form
+        the range.
+3. If more than 1 element remains in the range, go to step 2.
+4. Otherwise, N does not exists in the sequence and search stops.
+
+** Peak-finder
+[[https://www.youtube.com/watch?v=HtSuA80QTyo&list=PLUl4u3cNGP61Oq3tWYp6V_F-5jb5L2iHb&index=1][1. Algorithmic Thinking, Peak Finding - YouTube]]
+*** 1-d
+
+A posistion 2 is a peek if and only if 2 >= 1 and 2 >= 3. in edge you just
+need to look to one side. 9 >= 8.
+
+| a | b | c | d | e | f | g | h | i |
+| 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 |
+
+**** Straightforward algorithm
+
+| 1 | 2 | ... |   | n/2 |   | ... | n-1 | n |
+
+we could iterate over the entire sequence, checking each element. /O(n)/ algorithm.
+
+**** Binary Search
+
+1. Start with the whole sequence in range
+
+   | 1 | 2 | ... | n/2 -1 | n/2 | n/2 +1 | ... | n-1 | n |
+
+2. Compare the middle eleemnt of the current range with the neighbors
+   1. we modify the range:
+   2. If a[N/2] < a[n/2 -1], the only look at left half
+      | 1 | 2 | ... |   | n/2 |
+   3. If a[N/2] < a[n/2 + 1], the only look at right half
+      | n/2 |   | ... | n-1 | n |
+   4. Otherwise, a[n/2] is a peek
+3. If more than 1 element remains in the range, go to step 2.
+
+   /O(log2 n)/ algorithm
+*** 2-d
+**** straightforward algorithm
+
+/O(n*m)/ complexity, n and m size of the matrix
+
+**** 2 attempt
+1. Pick middle column j = m/2
+2. Find gloval maximum on clumn j at (i,j)
+3. Compare (i, j-1), (i,j), (i, j+1)
+4. Pick left columns of (i, j-1) > (i,j)
+5. Similarly to right
+6. (i,j) is a 2d peak if neither condition
+7. Solve the new proble with half number of columns
+8. When you have a single column, find global maximum and you're done
+
+   [[file:./Images/1579609210.png]]
+
+**** [[file:/mnt/hdd/nardo/Documents/Books/Data and Algorithm/[Thomas-H.-Cormen,-Charles-E.-Leiserson,-Ronald-L.(z-lib.org).pdf][MIT Introduction to Algorithms]]
+** Understanding the Divide and Conquer Approach
+
+1. *Divide* the problem into a number of subproblems that are smaller instaces
+   of the same problem.
+2. *Conquer* the subproblems by solving them recusively. If the subproblem sizes
+   are small enough, however, just solve the subproblems in a traightforward
+   manner.
+   *Combine* the solutions to the subproblems into the solution for the original
+   problem.
+
+** Merge Sort
+
+[[https://youtu.be/Kg4bqzAqRBM?list=PLUl4u3cNGP61Oq3tWYp6V_F-5jb5L2iHb&t=1684][3. Insertion Sort, Merge Sort - YouTube]]
+
+*Divide*: Divide the n-elemnt sequence to be sorted into two subsequences of n/2
+elements each
+*Conquer* Sort the two subsequences recusibely using merge sort
+*Combine* Merge the two sorted subsequences to produce the sorted answer
+
+[[file:./Images/1579611625.png]]
+
+** Quick sort
+
+[[https://www.youtube.com/watch?v=ETo1cpLN7kk&list=PLXFMmlk03Dt7Q0xr1PIAriY5623cKiH7V&index=25][5 1 Quicksort Overview 12 min - YouTube]]
+
+| Algorithm  | Best case  | Average case | Worst case |
+|------------+------------+--------------+------------|
+| Merge sort | O(n log n) | O(n log n)   | O(n log n) |
+| Quicksort  | O(n log n) | O(n log n)   | O(n^2)     |
+
+The advantage between Merge sort and quicksort, is the memory usage.
+
+Given an array and a pivot element, P, in the array, the partition operation
+does two things.
+- It divides the original array int two subarrays, L and R, where L contains all
+  the elements of the given array that are less than or equal to P, and R
+  contains all elements of the given array that are greater than P.
+- It reorganizes the elements in the array in the order L, P, R.
+
+  Algorithm:
+  1. If the input array, A, has more than 1 element in it, apply the partition
+     operation on A. It results in subarrays L and R.
+  2. Use L as an input to step 1.
+  3. Use R as input to step 1.
+
+     [[file:./Images/1579626452.png]]
+
+The worst case secnario for Quick sort is a sorted list, in this case Quick sort
+operate in /O(n^2)/.
+
+** Linear Time Selection
