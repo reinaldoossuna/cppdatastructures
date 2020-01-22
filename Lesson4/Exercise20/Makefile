@@ -5,7 +5,7 @@ SRCS        = $(wildcard *.cpp)
 HEADERS     = $(wildcard *.h)
 OBJS        = $(patsubst %.cpp, %.o, $(SRCS))
 
-CFLAGS      = -Wall -Wextra -Werror -I.
+CFLAGS      = -O2 -Wall -Wextra -Werror -I.
 LFLAGS      = -whitespace/braces,-legal/copyright
 LINELENGTH  = 120
 

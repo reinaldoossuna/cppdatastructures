@@ -5,31 +5,23 @@
 #include <random>
 
 template<class T>
-auto partition_random(typename std::vector<T>::iterator begin,
-               typename std::vector<T>::iterator last) {
-  std::random_device rd;
-  std::seed_seq      seed{rd(), rd(), rd(), rd(), rd(), rd(), rd(), rd()};
-  std::mt19937       eng(seed);
-  auto size = std::distance(begin, last);
-  std::uniform_int_distribution<int> uniform_dist(0, size);
-
-  auto random_iter = uniform_dist(eng);
-
-  auto pivot_val = *(begin+random_iter);
-  auto left_iter = begin;
-  auto right_iter = last;
+auto partition_random(typename std::vector<T>::iterator begin,  \
+                      typename std::vector<T>::iterator end) {
+  auto pivot = *begin;
+  auto left_iter = begin + 1;
+  auto right_iter = end;
 
   while (true) {
-    while (*left_iter <= pivot_val && std::distance(left_iter, right_iter))
+    while (*left_iter <= pivot && std::distance(left_iter, right_iter))
       ++left_iter;
-    while (*right_iter > pivot_val && std::distance(left_iter, right_iter))
+    while (*right_iter > pivot && std::distance(left_iter, right_iter))
       --right_iter;
     if (left_iter == right_iter)
       break;
     else
       std::iter_swap(left_iter, right_iter);
   }
-  if (pivot_val > *right_iter)
+  if (pivot > *right_iter)
     std::iter_swap(begin, right_iter);
 
   return right_iter;
@@ -38,6 +30,14 @@ auto partition_random(typename std::vector<T>::iterator begin,
 template<class T>
 void quick_sort_random(typename std::vector<T>::iterator begin,
                 typename std::vector<T>::iterator last) {
+
+  std::minstd_rand0 generator;
+  auto size = std::distance(begin, last);
+  std::uniform_int_distribution<int> uniform_dist(0, size);
+  auto random_iter = uniform_dist(generator);
+
+  std::iter_swap(begin, begin + random_iter);
+
   if (std::distance(begin, last) >= 1) {
     auto partition_iter = partition_random<T>(begin, last);
 
